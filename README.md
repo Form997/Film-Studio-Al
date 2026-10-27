@@ -2,8 +2,18 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.3 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.4 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V0.4 — Nền tảng ổn định để phát triển dài hạn
+- Schema dữ liệu có phiên bản, kiểm tra ID cảnh/nhân vật và tham chiếu.
+- Chuẩn hóa cấu hình khung hình, FPS, ngôn ngữ Việt/Anh/Trung.
+- Hợp đồng độc lập mô hình `VideoEngine`; không khóa vào một nhà cung cấp.
+- Kế hoạch sinh cảnh có hash SHA-256, hỗ trợ đối chiếu và truy vết.
+- API: `GET /api/projects/{id}/contract` và `GET /api/projects/{id}/generation-plan`.
+- Kiểm thử nền tảng: `tests/test_contracts.py`.
+- [Tài liệu kiến trúc V0.4](docs/KIEN-TRUC-V04.md).
+- **Chưa sinh video AI thực tế**; cần engine/model được cấu hình và kiểm thử riêng.
 
 ## V0.3 — Đạo diễn đa ngôn ngữ (vi/en/zh)
 - Tự viết `studio/film_brain.py`: kế hoạch cảnh, góc máy, prompt ba ngôn ngữ, nhân vật vào/ra cảnh, phát hiện ID nhân vật thiếu.
