@@ -16,7 +16,7 @@ NEGATIVE = {
     "zh": "人物身份一致，服装一致，手部自然，镜头连续",
 }
 def _clean(value: object, limit: int = 2000) -> str:
-    return re.sub(r"\\s+", " ", str(value or "")).strip()[:limit]
+    return re.sub(r"\s+", " ", str(value or "")).strip()[:limit]
 
 def _shot(scene: dict) -> str:
     text = _clean(scene.get("description")).lower()
