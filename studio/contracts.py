@@ -39,10 +39,10 @@ def validate_project(project: dict) -> dict:
     if not isinstance(characters, list) or not isinstance(scenes, list):
         return {"valid": False, "issues": ["characters and scenes must be arrays"]}
     ids = [c.get("id") for c in characters if isinstance(c, dict)]
-    if len(ids) != len(characters) or len(set(ids)) != len(ids) or any(not x for x in ids):
+    if len(ids) != len(characters) or len(set(map(str, ids))) != len(ids) or any(not x for x in ids):
         issues.append("character IDs must be unique and nonempty")
     scene_ids = [s.get("id") for s in scenes if isinstance(s, dict)]
-    if len(scene_ids) != len(scenes) or len(set(scene_ids)) != len(scene_ids) or any(not x for x in scene_ids):
+    if len(scene_ids) != len(scenes) or len(set(map(str, scene_ids))) != len(scene_ids) or any(not x for x in scene_ids):
         issues.append("scene IDs must be unique and nonempty")
     for scene in scenes:
         if not isinstance(scene, dict):
