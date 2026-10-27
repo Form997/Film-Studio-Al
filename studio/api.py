@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract, continuity
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.5.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.6.0")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.5.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "0.6.0", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -189,6 +189,14 @@ def analyze_motion(body: MotionInput, x_studio_token: str | None = Header(None))
     guard(x_studio_token)
     try:
         return continuity.motion_report(body.frames, jump_threshold=body.jump_threshold)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.get("/api/projects/{project_id}/story-plan")
+def story_plan(project_id: str, language: str = "vi"):
+    try:
+        return story_engine.analyze_story(get(project_id), language)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
