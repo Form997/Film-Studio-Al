@@ -2,8 +2,13 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.6 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.7 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V0.7 — Giao thức thực nghiệm
+- Tạo kế hoạch nhiều seed, SHA-256 và tổng hợp điểm đánh giá được nhập.
+- API: /api/projects/{id}/experiment-plan và /api/experiments/evaluate.
+- Xem docs/THUC-NGHIEM-V07.md. Chưa tích hợp mô hình sinh video.
 
 ## V0.6 — Đạo diễn phân cảnh và mạch truyện
 - `studio/story_engine.py`: scene graph, gợi ý góc máy, quy tắc chuyển cảnh, nhân vật vào/ra và tổng thời lượng.
