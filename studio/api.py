@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner, media_audit
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.8.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.9.0")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.8.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "0.9.0", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -254,6 +254,22 @@ async def local_run_status(prompt_id: str, x_studio_token: str | None = Header(N
         raise HTTPException(status_code=422, detail=str(exc))
     except Exception:
         raise HTTPException(status_code=502, detail="Local ComfyUI history request failed")
+
+
+class AuditLocalInput(BaseModel):
+    filename: str = Field(min_length=5, max_length=255)
+
+
+@app.post("/api/experiments/audit-local")
+def audit_local_output(body: AuditLocalInput, x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN before media audit")
+    guard(x_studio_token)
+    output_dir = Path(os.getenv("STUDIO_HOME", "./data")).resolve() / "outputs"
+    try:
+        return media_audit.audit_mp4(str(output_dir), body.filename)
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
 
 
 @app.post("/api/projects/{project_id}/render")
