@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner, media_audit, pipeline
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner, media_audit, pipeline, assembly
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="1.0.0-alpha")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="2.0.0-alpha")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "1.0.0-alpha", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "2.0.0-alpha", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -313,6 +313,26 @@ def pipeline_attach(project_id: str, scene_id: str, body: VerifiedMediaInput,
         return pipeline.verify_and_attach(project_id, scene_id, body.filename)
     except (ValueError, FileNotFoundError) as exc:
         raise HTTPException(status_code=422, detail=str(exc))
+
+
+class AssemblyInput(BaseModel):
+    width: int = 1280
+    height: int = 720
+    fps: int = 24
+
+
+@app.post("/api/projects/{project_id}/assemble")
+def assemble_project(project_id: str, body: AssemblyInput,
+                     x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN")
+    guard(x_studio_token)
+    try:
+        return assembly.assemble(project_id, width=body.width, height=body.height, fps=body.fps)
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except (RuntimeError, OSError):
+        raise HTTPException(status_code=502, detail="Local FFmpeg assembly failed")
 
 
 @app.post("/api/projects/{project_id}/render")
