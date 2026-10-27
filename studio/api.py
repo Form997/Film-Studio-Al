@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.6.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.7.0")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.6.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "0.7.0", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -197,6 +197,27 @@ def analyze_motion(body: MotionInput, x_studio_token: str | None = Header(None))
 def story_plan(project_id: str, language: str = "vi"):
     try:
         return story_engine.analyze_story(get(project_id), language)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+class ExperimentEvaluationInput(BaseModel):
+    observations: list[dict] = Field(min_length=1, max_length=1000)
+
+
+@app.get("/api/projects/{project_id}/experiment-plan")
+def get_experiment_plan(project_id: str, language: str = "vi", aspect: str = "landscape"):
+    try:
+        return experiment.experiment_plan(get(project_id), language=language, aspect=aspect)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.post("/api/experiments/evaluate")
+def evaluate_experiment(body: ExperimentEvaluationInput, x_studio_token: str | None = Header(None)):
+    guard(x_studio_token)
+    try:
+        return experiment.evaluate_observations(body.observations)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
