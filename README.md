@@ -2,8 +2,14 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.4 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.5 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V0.5 — Thuật toán chuyển động tự viết
+- `studio/continuity.py`: khoảng cách pose, phát hiện bước nhảy, trung vị chuyển động, đối chiếu metadata.
+- API `POST /api/analysis/motion` nhận keypoint đã có, cần token ghi nếu cấu hình.
+- Test: `tests/test_continuity.py`. Tài liệu: [THUAT-TOAN-V05](docs/THUAT-TOAN-V05.md).
+- **Không có nhận dạng khuôn mặt hoặc mô hình pose detector tích hợp**. Không thể xác nhận tính nhất quán nhân vật chỉ từ chỉ số này.
 
 ## V0.4 — Nền tảng ổn định để phát triển dài hạn
 - Schema dữ liệu có phiên bản, kiểm tra ID cảnh/nhân vật và tham chiếu.
