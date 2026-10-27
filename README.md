@@ -2,8 +2,14 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V1.0 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V2.0 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V2.0 Alpha — Ghép video cảnh MP4
+- `studio/assembly.py`: đối chiếu SHA-256 của clip đã gắn vào cảnh, chuẩn hóa video bằng FFmpeg và nối theo thứ tự cảnh.
+- `POST /api/projects/{id}/assemble` và `GET /api/projects/{id}/assembled.mp4` yêu cầu `STUDIO_TOKEN`.
+- `tests/test_assembly.py`; [hướng dẫn V2.0](docs/PHAT-HANH-V20.md).
+- **Chưa tự sinh video AI, chưa ghép âm thanh và chưa nghiệm thu end-to-end với clip thực tế.**
 
 ## V1.0 Alpha — Chuỗi sản xuất tích hợp
 - `studio/pipeline.py`: kiểm tra project/scene, lập kế hoạch, gửi workflow ComfyUI, gắn MP4 đã kiểm định vào đúng cảnh.
