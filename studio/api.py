@@ -335,6 +335,22 @@ def assemble_project(project_id: str, body: AssemblyInput,
         raise HTTPException(status_code=502, detail="Local FFmpeg assembly failed")
 
 
+@app.get("/api/projects/{project_id}/assembled.mp4")
+def download_assembled(project_id: str, x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN")
+    guard(x_studio_token)
+    try:
+        name = str(uuid.UUID(project_id)) + "-assembled.mp4"
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Invalid project ID")
+    get(project_id)
+    path = Path(os.getenv("STUDIO_HOME", "./data")).resolve() / "renders" / name
+    if not path.is_file():
+        raise HTTPException(status_code=404, detail="No assembled video")
+    return FileResponse(path, filename=name, media_type="video/mp4")
+
+
 @app.post("/api/projects/{project_id}/render")
 def render_project(project_id: str, x_studio_token: str | None = Header(None)):
     guard(x_studio_token)
