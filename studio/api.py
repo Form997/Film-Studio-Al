@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner, media_audit
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner, media_audit, pipeline
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.9.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="1.0.0-alpha")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.9.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "1.0.0-alpha", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -268,6 +268,49 @@ def audit_local_output(body: AuditLocalInput, x_studio_token: str | None = Heade
     output_dir = Path(os.getenv("STUDIO_HOME", "./data")).resolve() / "outputs"
     try:
         return media_audit.audit_mp4(str(output_dir), body.filename)
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+class WorkflowSubmitInput(BaseModel):
+    workflow: dict
+    model_label: str = Field(default="unverified", max_length=200)
+
+
+class VerifiedMediaInput(BaseModel):
+    filename: str = Field(min_length=5, max_length=255)
+
+
+@app.get("/api/projects/{project_id}/pipeline-preview")
+def pipeline_preview(project_id: str, language: str = "vi"):
+    try:
+        return pipeline.preview(project_id, language=language)
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.post("/api/projects/{project_id}/scenes/{scene_id}/submit-workflow")
+async def pipeline_submit(project_id: str, scene_id: str, body: WorkflowSubmitInput,
+                          x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN")
+    guard(x_studio_token)
+    try:
+        return await pipeline.submit(project_id, scene_id, body.workflow, model_label=body.model_label)
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=502, detail="Local video workflow submission failed")
+
+
+@app.post("/api/projects/{project_id}/scenes/{scene_id}/attach-verified")
+def pipeline_attach(project_id: str, scene_id: str, body: VerifiedMediaInput,
+                    x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN")
+    guard(x_studio_token)
+    try:
+        return pipeline.verify_and_attach(project_id, scene_id, body.filename)
     except (ValueError, FileNotFoundError) as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
