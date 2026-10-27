@@ -1,4 +1,4 @@
-# 🎬 HAI ĐẤT AI FILM STUDIO
+# 🎬 AI FILM STUDIO
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
@@ -78,6 +78,6 @@ Toàn bộ mã điều phối ứng dụng trong kho được phát triển đ�
 - https://github.com/AcademySoftwareFoundation/OpenTimelineIO
 - https://github.com/FFmpeg/FFmpeg
 
-**Tác giả/điều phối:** Form997 — HAI ĐẤT AI FILM STUDIO. **License:** MIT cho mã tự viết; không bao gồm model bên ngoài.
+**Tác giả/điều phối:** Form997 — AI FILM STUDIO. **License:** MIT cho mã tự viết; không bao gồm model bên ngoài.
 
 Đây là bản lõi được tái xây dựng trực tiếp trên GitHub; lưu trữ V0.2 trước đây vẫn được giữ riêng để đối chiếu tính năng và tiếp tục nghiệm thu.
