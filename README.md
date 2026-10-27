@@ -2,8 +2,15 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.9 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V1.0 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V1.0 Alpha — Chuỗi sản xuất tích hợp
+- `studio/pipeline.py`: kiểm tra project/scene, lập kế hoạch, gửi workflow ComfyUI, gắn MP4 đã kiểm định vào đúng cảnh.
+- API: `GET /api/projects/{id}/pipeline-preview`, `POST /api/projects/{id}/scenes/{scene_id}/submit-workflow`, `POST /api/projects/{id}/scenes/{scene_id}/attach-verified`.
+- Thao tác ghi/thực thi mới bắt buộc `STUDIO_TOKEN`; video đặt trong `STUDIO_HOME/outputs`.
+- Test: `tests/test_pipeline.py`; [nghiệm thu V1.0](docs/NGHIEM-THU-V10.md).
+- **V1.0 Alpha chưa có model video mặc định, chưa tự thu clip từ ComfyUI, chưa ghép các clip AI vào phim. Chưa nghiệm thu GPU/video thật.**
 
 ## V0.9 — Kiểm định video MP4 cục bộ
 - `studio/media_audit.py`: ffprobe metadata, SHA-256, duration, resolution, codec, file size.
