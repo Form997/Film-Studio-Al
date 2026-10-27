@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HAI ĐẤT AI FILM STUDIO</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header><div class="brand">🎬 HAI ĐẤT <span>AI FILM STUDIO</span></div><small>V0.2 · Phòng dựng phim tự chủ mã nguồn</small></header>
+<main>
+<aside>
+<h2>Dự án phim</h2>
+<form id="newProject"><label>Tên phim<input id="newTitle" placeholder="Ví dụ: Miền Tây mùa nước nổi" required maxlength="140"></label><button>Tạo dự án</button></form>
+<div id="projectList"></div>
+</aside>
+<section>
+<div class="hero"><h1 id="selectedTitle">Hãy chọn hoặc tạo một dự án</h1><p>Dựng kịch bản · Phân cảnh · Giữ hồ sơ nhân vật · Kiểm định · Xuất MP4 thử nghiệm</p></div>
+<div id="editor" hidden>
+<div class="panel"><h2>1. Kịch bản</h2><p>Mỗi đoạn cách nhau một dòng trắng tạo thành một cảnh.</p><textarea id="script" rows="9" placeholder="Viết câu chuyện của bạn bằng tiếng Việt..."></textarea><div class="actions"><button id="saveScript">Lưu kịch bản</button><button id="splitScenes" class="primary">Tách phân cảnh</button></div></div>
+<div class="cols">
+<div class="panel"><h2>2. Nhân vật</h2><form id="characterForm"><input id="charName" required placeholder="Tên nhân vật"><textarea id="charAppearance" rows="3" placeholder="Ngoại hình nhất quán"></textarea><input id="charVoice" placeholder="Giọng nói"><button>Thêm nhân vật</button></form><div id="characters"></div></div>
+<div class="panel"><h2>3. Kiểm định</h2><p>Kiểm định cấu trúc và thông tin nhân vật, chưa phải nhận diện khuôn mặt.</p><button id="audit">Kiểm tra cảnh</button><button id="shotlist">Tải kế hoạch quay JSON</button><pre id="quality"></pre></div>
+</div>
+<div class="panel"><h2>4. Danh sách phân cảnh</h2><div id="scenes"></div><button id="render">Xuất phim MP4 minh họa</button><p id="renderResult"></p></div>
+</div>
+</section>
+</main>
+<footer>Phần mềm điều phối độc lập · Không tải mô hình AI hoặc trọng số từ kho này · Chỉ dùng tư liệu có quyền sử dụng</footer>
+<script src="/app.js"></script>
+</body></html>

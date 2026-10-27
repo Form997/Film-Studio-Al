@@ -1,0 +1,10 @@
+services:
+  film-studio:
+    build: .
+    command: uvicorn studio.api:app --host 0.0.0.0 --port 7860
+    ports:
+      - "127.0.0.1:7860:7860"
+    volumes:
+      - ./data:/app/data
+    environment:
+      STUDIO_HOME: /app/data
