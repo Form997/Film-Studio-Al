@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.4.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.5.0")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.4.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "0.5.0", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -175,6 +175,20 @@ def generation_plan(project_id: str, language: str = "vi", aspect: str = "landsc
         return {"schema_version": contracts.SCHEMA_VERSION,
                 "project_id": project_id, "validation": validation,
                 "requests": requests, "engine": "not-configured"}
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+class MotionInput(BaseModel):
+    frames: list[dict[str, list[float]]] = Field(min_length=2, max_length=10000)
+    jump_threshold: float = Field(default=0.2, gt=0, le=2)
+
+
+@app.post("/api/analysis/motion")
+def analyze_motion(body: MotionInput, x_studio_token: str | None = Header(None)):
+    guard(x_studio_token)
+    try:
+        return continuity.motion_report(body.frames, jump_threshold=body.jump_threshold)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
