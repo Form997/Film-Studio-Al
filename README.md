@@ -2,8 +2,15 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.7 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.8 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V0.8 — Thử nghiệm thực thi ComfyUI cục bộ
+- `studio/runner.py`: kiểm định workflow, hash, gửi job khi chủ động yêu cầu, kiểm tra lịch sử job.
+- API: `POST /api/experiments/submit-local`, `GET /api/experiments/local-status/{prompt_id}`.
+- Bắt buộc cấu hình `STUDIO_TOKEN`; ComfyUI chỉ trên loopback.
+- [Tài liệu V0.8](docs/THUC-THI-V08.md) và `tests/test_runner.py`.
+- **Chưa có model video tích hợp sẵn; job được gửi không đồng nghĩa video hoàn thành.**
 
 ## V0.7 — Giao thức thực nghiệm
 - Tạo kế hoạch nhiều seed, SHA-256 và tổng hợp điểm đánh giá được nhập.
