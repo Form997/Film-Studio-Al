@@ -1,15 +1,39 @@
-name: Test Studio
+name: Test Studio and Save Evidence
 on:
   push:
   pull_request:
+  workflow_dispatch:
 jobs:
   python:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-core
-      - run: python -m pip install -r requirements-dev.txt
-      - run: pytest -q
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-noto-core
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Capture environment
+        if: always()
+        run: |
+          mkdir -p audit-results
+          echo "Git commit: ${GITHUB_SHA}" > audit-results/environment.txt
+          python --version >> audit-results/environment.txt 2>&1
+          ffmpeg -version | head -n 1 >> audit-results/environment.txt 2>&1
+          ffprobe -version | head -n 1 >> audit-results/environment.txt 2>&1
+      - name: Run full test suite and real MP4 E2E
+        id: pytest
+        run: |
+          set -o pipefail
+          python -m pytest -ra -q --junitxml=audit-results/pytest.xml 2>&1 | tee audit-results/pytest.log
+      - name: Upload audit evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-v01-v20-test-evidence
+          path: audit-results/
+          if-no-files-found: warn
+          retention-days: 30
