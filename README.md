@@ -2,8 +2,14 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.8 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.9 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V0.9 — Kiểm định video MP4 cục bộ
+- `studio/media_audit.py`: ffprobe metadata, SHA-256, duration, resolution, codec, file size.
+- `POST /api/experiments/audit-local` kiểm tra tệp trong `STUDIO_HOME/outputs`, yêu cầu `STUDIO_TOKEN`.
+- [Tài liệu V0.9](docs/NGHIEM-THU-V09.md); tests `tests/test_media_audit.py`.
+- **Chưa tự thu video từ ComfyUI; chưa đánh giá chất lượng hình ảnh hoặc giải mã toàn bộ frame.**
 
 ## V0.8 — Thử nghiệm thực thi ComfyUI cục bộ
 - `studio/runner.py`: kiểm định workflow, hash, gửi job khi chủ động yêu cầu, kiểm tra lịch sử job.
