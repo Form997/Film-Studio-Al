@@ -2,8 +2,15 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.5 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.6 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
 
+
+## V0.6 — Đạo diễn phân cảnh và mạch truyện
+- `studio/story_engine.py`: scene graph, gợi ý góc máy, quy tắc chuyển cảnh, nhân vật vào/ra và tổng thời lượng.
+- Hỗ trợ từ điển quy tắc Việt/Anh/Trung; không dịch tự động và không phải mô hình ngôn ngữ.
+- API `GET /api/projects/{id}/story-plan?language=vi` (hoặc en/zh).
+- Test: `tests/test_story_engine.py`. Tài liệu: [THUAT-TOAN-V06](docs/THUAT-TOAN-V06.md).
+- **Đây là bộ lập kế hoạch dựa quy tắc, chưa tự hiểu sâu hoặc dựng video AI.**
 
 ## V0.5 — Thuật toán chuyển động tự viết
 - `studio/continuity.py`: khoảng cách pose, phát hiện bước nhảy, trung vị chuyển động, đối chiếu metadata.
