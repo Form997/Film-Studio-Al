@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment
+from . import storage, director, render, film_brain, contracts, engine_contract, continuity, story_engine, experiment, runner
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.7.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.8.0")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.7.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "0.8.0", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -220,6 +220,40 @@ def evaluate_experiment(body: ExperimentEvaluationInput, x_studio_token: str | N
         return experiment.evaluate_observations(body.observations)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
+
+
+class LocalRunInput(BaseModel):
+    project_id: str = Field(min_length=1, max_length=100)
+    scene_id: str = Field(min_length=1, max_length=100)
+    workflow: dict
+    model_label: str = Field(default="unverified", max_length=200)
+
+
+@app.post("/api/experiments/submit-local")
+async def submit_local_run(body: LocalRunInput, x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN before local execution")
+    guard(x_studio_token)
+    try:
+        return await runner.submit_local(body.workflow, project_id=body.project_id,
+                                         scene_id=body.scene_id, model_label=body.model_label)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=502, detail="Local ComfyUI submission failed")
+
+
+@app.get("/api/experiments/local-status/{prompt_id}")
+async def local_run_status(prompt_id: str, x_studio_token: str | None = Header(None)):
+    if not os.getenv("STUDIO_TOKEN"):
+        raise HTTPException(status_code=403, detail="Configure STUDIO_TOKEN before checking local execution")
+    guard(x_studio_token)
+    try:
+        return await runner.check_local(prompt_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except Exception:
+        raise HTTPException(status_code=502, detail="Local ComfyUI history request failed")
 
 
 @app.post("/api/projects/{project_id}/render")
