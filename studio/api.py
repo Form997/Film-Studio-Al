@@ -10,9 +10,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import storage, director, render, film_brain
+from . import storage, director, render, film_brain, contracts, engine_contract
 
-app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.3.0")
+app = FastAPI(title="HAI ĐẤT AI FILM STUDIO", version="0.4.0")
 WEB = Path(__file__).resolve().parent.parent / "web"
 
 
@@ -60,7 +60,7 @@ class ReorderInput(BaseModel):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "version": "0.3.0", "video_ai": "optional external engine"}
+    return {"status": "ok", "version": "0.4.0", "video_ai": "optional external engine"}
 
 
 @app.get("/api/projects")
@@ -146,6 +146,35 @@ def shots(project_id: str, aspect: str = "landscape"):
 def film_director(project_id: str, language: str = "vi", aspect: str = "landscape"):
     try:
         return film_brain.direct(get(project_id), language, aspect)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.get("/api/projects/{project_id}/contract")
+def contract_check(project_id: str):
+    return contracts.validate_project(get(project_id))
+
+
+@app.get("/api/projects/{project_id}/generation-plan")
+def generation_plan(project_id: str, language: str = "vi", aspect: str = "landscape"):
+    try:
+        spec = contracts.RenderSpec(language=language, aspect=aspect)
+        project = get(project_id)
+        validation = contracts.validate_project(project)
+        if not validation["valid"]:
+            raise HTTPException(status_code=422, detail=validation["issues"])
+        plan = film_brain.direct(project, language, aspect)
+        requests = [
+            engine_contract.GenerationRequest(
+                scene_id=str(shot["scene_id"]),
+                prompt=shot["prompt"],
+                spec=spec,
+            ).manifest()
+            for shot in plan["shots"]
+        ]
+        return {"schema_version": contracts.SCHEMA_VERSION,
+                "project_id": project_id, "validation": validation,
+                "requests": requests, "engine": "not-configured"}
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
 
