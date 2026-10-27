@@ -2,7 +2,16 @@
 
 **Nền tảng sản xuất phim AI tự chủ mã nguồn, ưu tiên tiếng Việt.**
 
-> V0.2 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+> V0.3 Alpha — ứng dụng điều phối, biên kịch, quản lý nhân vật và dựng video thẻ tiêu đề chạy cục bộ. **Chưa phải hệ thống sinh phim AI hoàn chỉnh**; cần GPU + mô hình thích hợp để sinh cảnh video AI.
+
+
+## V0.3 — Đạo diễn đa ngôn ngữ (vi/en/zh)
+- Tự viết `studio/film_brain.py`: kế hoạch cảnh, góc máy, prompt ba ngôn ngữ, nhân vật vào/ra cảnh, phát hiện ID nhân vật thiếu.
+- API: `GET /api/projects/{project_id}/director?language=vi&aspect=landscape` (có thể đổi `en` hoặc `zh`).
+- Kiểm tra sửa hồ sơ nhân vật bằng fingerprint; **chưa phải nhận diện khuôn mặt**.
+- Kiểm thử: `tests/test_film_brain.py`.
+- Nghiên cứu nguồn Trung Quốc và tiếng Anh: [docs/NGHIEN-CUU-QUOC-TE-V03.md](docs/NGHIEN-CUU-QUOC-TE-V03.md).
+- **Giới hạn:** prompt đa ngôn ngữ không phải bản dịch kịch bản; không có mô hình video hay LLM được tích hợp sẵn.
 
 ## Cài đặt nhanh
 Cần Python 3.11+, FFmpeg và FFprobe trên PATH.
